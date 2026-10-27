@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { connectToMongoDB } from "./lib/mongodb";
 
 const rawPort = process.env["PORT"];
 
@@ -15,11 +16,17 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
-    process.exit(1);
-  }
+try {
+  await connectToMongoDB();
+  app.listen(port, () => {
+    logger.info({ port }, "Server listening");
+  });
+} catch (error) {
+  // Avoid logging a MongoDB error message, which may contain the connection URI.
+  logger.error(
+    { errorName: error instanceof Error ? error.name : "UnknownError" },
+    "Could not connect to MongoDB Atlas",
+  );
+  process.exit(1);
+}
 
-  logger.info({ port }, "Server listening");
-});

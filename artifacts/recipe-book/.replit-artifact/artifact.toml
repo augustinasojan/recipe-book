@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Recipe Book"
+description = "A personal recipe collection for saving, browsing, and maintaining favorite meals. Create, view, edit, and delete recipes with ingredients, preparation steps, category, and cooking time, persisted in MongoDB Atlas."
+version = "1.0.0"
+id = "artifacts/recipe-book"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23335
+
+[services.development]
+run = "pnpm --filter @workspace/recipe-book run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/recipe-book", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/recipe-book/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23335"
+BASE_PATH = "/"

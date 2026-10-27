@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: recipes
+    description: Recipe collection operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,157 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /recipes:
+    get:
+      operationId: listRecipes
+      tags: [recipes]
+      summary: List all recipes
+      responses:
+        "200":
+          description: Recipe collection
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Recipe"
+        "500":
+          description: Recipe storage is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    post:
+      operationId: createRecipe
+      tags: [recipes]
+      summary: Create a recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecipeInput"
+      responses:
+        "201":
+          description: Recipe created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipe"
+        "400":
+          description: Invalid recipe data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Recipe storage is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+  /recipes/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 24
+          maxLength: 24
+    get:
+      operationId: getRecipe
+      tags: [recipes]
+      summary: Get recipe details
+      responses:
+        "200":
+          description: Recipe details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipe"
+        "400":
+          description: Invalid recipe ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Recipe not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Recipe storage is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    patch:
+      operationId: updateRecipe
+      tags: [recipes]
+      summary: Update a recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecipeUpdate"
+      responses:
+        "200":
+          description: Recipe updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipe"
+        "400":
+          description: Invalid recipe data or recipe ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Recipe not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Recipe storage is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+    delete:
+      operationId: deleteRecipe
+      tags: [recipes]
+      summary: Delete a recipe
+      responses:
+        "200":
+          description: Recipe deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteRecipeResult"
+        "400":
+          description: Invalid recipe ID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Recipe not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "500":
+          description: Recipe storage is unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +186,101 @@ components:
           type: string
       required:
         - status
+    RecipeCategory:
+      type: string
+      enum: [Breakfast, Lunch, Dinner, Snack, Dessert]
+    Recipe:
+      type: object
+      required: [id, name, category, ingredients, steps, cookingTimeMinutes, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          minLength: 24
+          maxLength: 24
+        name:
+          type: string
+          minLength: 1
+        category:
+          $ref: "#/components/schemas/RecipeCategory"
+        ingredients:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        steps:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        cookingTimeMinutes:
+          type: integer
+          minimum: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    RecipeInput:
+      type: object
+      required: [name, category, ingredients, steps, cookingTimeMinutes]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        category:
+          $ref: "#/components/schemas/RecipeCategory"
+        ingredients:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        steps:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        cookingTimeMinutes:
+          type: integer
+          minimum: 1
+    RecipeUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 1
+        category:
+          $ref: "#/components/schemas/RecipeCategory"
+        ingredients:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        steps:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+        cookingTimeMinutes:
+          type: integer
+          minimum: 1
+    DeleteRecipeResult:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+    ApiError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
 
