@@ -1,0 +1,25 @@
+Problem Statement
+Design and implement a Recipe Book web application using the MERN Stack (MongoDB, Express.js, React.js, Node.js). The application should allow a user to store their favourite recipes and manage them efficiently. All data must be stored in the database, and every operation must work from the frontend through the backend.
+
+Requirements
+Add Recipe: Provide a form with the following fields:
+Recipe Name
+Category (e.g., Breakfast, Lunch, Dinner, Snack, Dessert)
+Ingredients
+Preparation Steps
+Cooking Time (in minutes)
+On submission, the recipe must be saved in MongoDB Atlas through a REST API. Show an appropriate message on success or failure, and do not allow empty or invalid values (for example, a negative cooking time).
+View Recipes: Display all saved recipes as cards showing the Recipe Name, Category and Cooking Time. The list must refresh automatically after any add, edit or delete operation without a manual page reload.
+View Recipe Details: Clicking a recipe card must display its full details (Ingredients and Preparation Steps) on a separate details page or in a modal.
+Edit Recipe: Each recipe must have an Edit option. The form must be pre-filled with the existing data, and saving it must update the record in the database and on screen.
+Delete Recipe: Each recipe must have a Delete option that removes the record from the database and from the screen, with a confirmation before deleting.
+Backend: Implement RESTful APIs in Node.js with Express.js for Create, Read (all and by ID), Update and Delete, and use MongoDB Atlas (with Mongoose) as the database.
+UI/UX: The interface must be clean, attractive and responsive on both mobile and desktop screens. It carries separate marks.
+Recommended Checklist Before Submitting
+The repository is public or accessible to the evaluators.
+Both the frontend and backend folders are pushed.
+The .env file is included.
+package.json files list all dependencies.
+The project connects to MongoDB Atlas and runs correctly after a fresh clone and npm install.
+Add, View, View Details, Edit and Delete all work end to end.
+The UI is responsive on mobile and desktop screen
